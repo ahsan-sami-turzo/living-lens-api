@@ -12,14 +12,13 @@ PG_USER = os.getenv("PG_USER")
 PG_PASSWORD = os.getenv("PG_PASSWORD")
 PG_DATABASE = os.getenv("PG_DATABASE")
 PG_HOST = os.getenv("PG_HOST")
-PG_PORT = os.getenv("PG_PORT")
-DATABASE_URL = f"postgresql://{PG_USER}:{PG_PASSWORD}@{PG_HOST}:{PG_PORT}/{PG_DATABASE}"
+DATABASE_URL = f"postgresql://{PG_USER}:{PG_PASSWORD}@{PG_HOST}/{PG_DATABASE}"
 engine = None
 session = None
 
 # MongoDB
 MONGO_URI = os.getenv("MONGO_URI")
-MONGO_DBNAME = os.getenv("MONGO_DBNAME")
+MONGO_DBNAME = "living-lens"
 mongo_client = None
 mongo_db = None
 
