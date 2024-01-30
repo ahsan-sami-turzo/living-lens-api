@@ -1,17 +1,18 @@
 # app/api/controllers/csv_loader_controller.py
 import csv
+from pathlib import Path
 
 from sqlalchemy.orm import Session
 
 from app.api.models.expense_models import City, ExpenseCategory, Expense
 
 
-def load_csv_data(db: Session, filename: str):
+def load_csv_data(db: Session, file_path: Path):
     success_count = 0
     error_count = 0
 
     # Extract city name from filename
-    city_name = filename.split('.')[0]
+    city_name = file_path.stem  # Use stem to get filename without extension
 
     # 1. Insert into City table if does not exist
     city = db.query(City).filter(City.CityName == city_name).first()
@@ -24,7 +25,7 @@ def load_csv_data(db: Session, filename: str):
     # 3. Get CityID of the City table
     city_id = city.CityID
 
-    with open(filename, mode='r', encoding='utf-8') as csv_file:
+    with open(file_path, mode='r', encoding='utf-8') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             try:
@@ -47,9 +48,9 @@ def load_csv_data(db: Session, filename: str):
                     "CityID": city_id,
                     "CategoryID": category_id,
                     "Title": row['Title'],
-                    "PriceMin": float(row['PriceMin']),
-                    "PriceMax": float(row['PriceMax']),
-                    "PriceAverage": float(row['PriceAverage']),
+                    "PriceMin": float(row['priceMin']),
+                    "PriceMax": float(row['priceMax']),
+                    "PriceAverage": float(row['priceAverage']),
                 }
 
                 expense = Expense(**expense_data)
