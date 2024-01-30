@@ -12,10 +12,10 @@ class AsyncIOMotorClient:
     pass
 
 
-@router.post("/load-csv")
-async def load_csv_to_database(db: Session = Depends(get_db), mdb: AsyncIOMotorClient = Depends(get_async_db)):
+@router.post("/load-csv/{filename}")
+async def load_csv_to_database(filename: str, db: Session = Depends(get_db)):
     try:
-        success_count, error_count = load_csv_data(db)
+        success_count, error_count = load_csv_data(db, filename)
         return {"success_count": success_count, "error_count": error_count}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -6,37 +6,59 @@ from sqlalchemy.orm import Session
 from app.api.models.expense_models import City, ExpenseCategory, Expense
 
 
-def load_csv_data(db: Session):
+def load_csv_data(db: Session, filename: str):
     success_count = 0
     error_count = 0
 
-    with open('your_csv_file.csv', mode='r', encoding='utf-8') as csv_file:
+    # Extract city name from filename
+    city_name = filename.split('.')[0]
+
+    # 1. Insert into City table if does not exist
+    city = db.query(City).filter(City.CityName == city_name).first()
+    if not city:
+        city = City(CityName=city_name)
+        db.add(city)
+        db.commit()
+        db.refresh(city)
+
+    # 3. Get CityID of the City table
+    city_id = city.CityID
+
+    with open(filename, mode='r', encoding='utf-8') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             try:
-                # Assuming your CSV has columns 'CityID', 'CityName', 'CategoryID', ...
-                city_data = {"CityID": int(row['CityID']), "CityName": row['CityName']}
-                expense_category_data = {"CategoryID": int(row['CategoryID']), "CategoryName": row['CategoryName']}
+                # 4. Get Category Name from the 'Category' column
+                category_name = row['Category']
+
+                # 5. Insert into ExpenseCategory table if does not exist
+                category = db.query(ExpenseCategory).filter(ExpenseCategory.CategoryName == category_name).first()
+                if not category:
+                    category = ExpenseCategory(CategoryName=category_name)
+                    db.add(category)
+                    db.commit()
+                    db.refresh(category)
+
+                # 6. Get CategoryID from ExpenseCategory table
+                category_id = category.CategoryID
+
+                # 7. Insert into Expense table
                 expense_data = {
-                    "ExpenseID": int(row['ExpenseID']),
-                    "CityID": int(row['CityID']),
-                    "CategoryID": int(row['CategoryID']),
-                    "MinCost": float(row['MinCost']),
-                    "MaxCost": float(row['MaxCost']),
-                    "MedianCost": float(row['MedianCost']),
+                    "CityID": city_id,
+                    "CategoryID": category_id,
+                    "Title": row['Title'],
+                    "PriceMin": float(row['PriceMin']),
+                    "PriceMax": float(row['PriceMax']),
+                    "PriceAverage": float(row['PriceAverage']),
                 }
 
-                # Insert data into tables
-                db.merge(City(**city_data))
-                db.merge(ExpenseCategory(**expense_category_data))
-                db.merge(Expense(**expense_data))
+                expense = Expense(**expense_data)
+                db.add(expense)
+                db.commit()
 
                 success_count += 1
             except Exception as e:
                 # Log or handle the error as needed
                 error_count += 1
-
-    # Commit the changes to the database
-    db.commit()
 
     return success_count, error_count

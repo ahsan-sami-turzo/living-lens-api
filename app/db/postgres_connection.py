@@ -6,3 +6,11 @@ from app.settings import settings
 
 engine = create_engine(settings.DATABASE_URL, poolclass=QueuePool, pool_size=10, max_overflow=20)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+def get_postgres_session() -> Session:
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
