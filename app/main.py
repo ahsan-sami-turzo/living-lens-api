@@ -15,7 +15,7 @@ session = Session(engine)
 app.include_router(api_router)
 
 
-@app.get("/")
+@app.get("/api")
 def read_items():
     return {"project": "living-lens"}
 
