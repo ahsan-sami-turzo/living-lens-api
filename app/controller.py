@@ -23,3 +23,29 @@ def get_lifestyles(db: Session = Depends(SessionLocal)):
     lifestyles = [lifestyle.__dict__ for lifestyle in lifestyles]
     # Return the list of lifestyles
     return lifestyles
+
+
+# Define the controller method to get the prices based on city and lifestyles
+async def get_prices(city_id: int, lifestyle_id: int, db: Session = Depends(SessionLocal)):
+    """Retrieves prices from the database."""
+
+    prices = (
+        db.query(Price)
+        # Explicitly define starting table:
+        .select_from(Price)
+        # Join with Lifestyle using foreign key relationship:
+        .join(Lifestyle, Price.city_id_fk == Lifestyle.id)
+        .filter(Price.city_id_fk == city_id)
+        .filter(Lifestyle.id == lifestyle_id)
+        .all()
+    )
+
+    return [
+        {
+            "average_price": price.average_price,
+            "min_price": price.min_price,
+            "max_price": price.max_price,
+            # Add other relevant fields as needed
+        }
+        for price in prices
+    ]

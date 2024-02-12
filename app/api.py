@@ -27,3 +27,12 @@ def get_cities_api(db: Session = Depends(get_db)):
 @router.get("/lifestyles")
 def get_lifestyles_api(db: Session = Depends(get_db)):
     return get_data(Lifestyle, db)
+
+
+# API endpoint to retrieve prices based on city and lifestyle
+@router.get("/prices/{city_id}/{lifestyle_id}")
+async def get_prices_api(
+        city_id: int, lifestyle_id: int, db: Session = Depends(get_db)
+):
+    prices = await get_prices(city_id, lifestyle_id, db)
+    return prices
