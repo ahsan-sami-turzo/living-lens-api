@@ -1,10 +1,12 @@
+from fastapi import Depends
 from sqlalchemy.orm import Session
 
+from database import SessionLocal
 from models import *
 
 
 # Define the controller method to get the list of cities
-def get_cities(db: Session):
+def get_cities(db: Session = Depends(SessionLocal)):
     # Query the database for all the cities
     cities = db.query(City).all()
     # Convert the city objects to dictionaries
@@ -14,7 +16,7 @@ def get_cities(db: Session):
 
 
 # Define the controller method to get the list of lifestyles
-def get_lifestyles(db: Session):
+def get_lifestyles(db: Session = Depends(SessionLocal)):
     # Query the database for all the cities
     lifestyles = db.query(Lifestyle).all()
     # Convert the lifestyle objects to dictionaries

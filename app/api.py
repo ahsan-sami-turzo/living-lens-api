@@ -1,26 +1,29 @@
-from fastapi import FastAPI, Depends, APIRouter
+from fastapi import APIRouter
+
 from controller import *
 from database import get_db, SessionLocal
 
 router = APIRouter()
 
-# Create the FastAPI app
-app = FastAPI()
+
+@router.get("/db")
+def read_items():
+    return {"db": "living-lens"}
 
 
-# Define the api endpoint to get the list of cities
-@app.get("/cities")
-def get_cities_api(db: SessionLocal = Depends(get_db)):
-    # Call the controller method to get the list of cities
-    cities = get_cities(db)
-    # Return the list of cities as a JSON response
-    return {"cities": cities}
+def get_data(model_type, db: Session = Depends(SessionLocal)):
+    # Query the database for all relevant objects
+    data = db.query(model_type).all()
+    # Convert objects to dictionaries and return
+    return [obj.__dict__ for obj in data]
 
 
-# Define the api endpoint to get the list of lifestyles
-@app.get("/lifestyles")
-def get_cities_api(db: SessionLocal = Depends(get_db)):
-    # Call the controller method to get the list of cities
-    lifestyles = get_lifestyles(db)
-    # Return the list of cities as a JSON response
-    return {"lifestyles": lifestyles}
+# Usage in API endpoints:
+@router.get("/cities")
+def get_cities_api(db: Session = Depends(get_db)):
+    return get_data(City, db)
+
+
+@router.get("/lifestyles")
+def get_lifestyles_api(db: Session = Depends(get_db)):
+    return get_data(Lifestyle, db)
