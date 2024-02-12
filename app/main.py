@@ -1,23 +1,13 @@
 from fastapi import FastAPI
-from app.api.routers.house_rent_router import router as house_rent_router
-from app.db import connection
+
+from api import router as api_router
 
 app = FastAPI()
 
+# Include the API endpoints from api.py
+app.include_router(api_router)
 
-@app.on_event("startup")
-async def startup_db_client():
-    await connection.startup_db_client()
+if __name__ == "__main__":
+    import uvicorn
 
-
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    await connection.shutdown_db_client()
-
-
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
-app.include_router(house_rent_router)
+    uvicorn.run(app, host="127.0.0.1", port=8080)
