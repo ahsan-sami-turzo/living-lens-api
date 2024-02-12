@@ -30,11 +30,9 @@ async def get_prices(city_id: int, lifestyle_id: int, db: Session = Depends(Sess
     """Retrieves prices from the database."""
 
     prices = (
-        db.query(Price)
-        # Explicitly define starting table:
-        .select_from(Price)
-        # Join with Lifestyle using foreign key relationship:
+        db.query(Price, SubCategory.subcategory_name)  # Include SubCategory in the query
         .join(Lifestyle, Price.city_id_fk == Lifestyle.id)
+        .join(SubCategory, Price.subcategory_id_fk == SubCategory.id)  # Join with SubCategory
         .filter(Price.city_id_fk == city_id)
         .filter(Lifestyle.id == lifestyle_id)
         .all()
@@ -42,10 +40,10 @@ async def get_prices(city_id: int, lifestyle_id: int, db: Session = Depends(Sess
 
     return [
         {
+            "subcategory_name": subcategory_name,
             "average_price": price.average_price,
             "min_price": price.min_price,
             "max_price": price.max_price,
-            # Add other relevant fields as needed
         }
-        for price in prices
+        for price, subcategory_name in prices
     ]
