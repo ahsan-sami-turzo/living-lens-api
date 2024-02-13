@@ -16,13 +16,13 @@ def get_cities(db: Session = Depends(SessionLocal)):
 
 
 # Define the controller method to get the list of lifestyles
-def get_lifestyles(db: Session = Depends(SessionLocal)):
-    # Query the database for all the cities
-    lifestyles = db.query(Lifestyle).all()
-    # Convert the lifestyle objects to dictionaries
-    lifestyles = [lifestyle.__dict__ for lifestyle in lifestyles]
-    # Return the list of lifestyles
-    return lifestyles
+# def get_lifestyles(db: Session = Depends(SessionLocal)):
+#     # Query the database for all the cities
+#     lifestyles = db.query(Lifestyle).all()
+#     # Convert the lifestyle objects to dictionaries
+#     lifestyles = [lifestyle.__dict__ for lifestyle in lifestyles]
+#     # Return the list of lifestyles
+#     return lifestyles
 
 
 # Define the controller method to get the prices based on city and lifestyles
@@ -83,3 +83,43 @@ def get_countries(name: str = None, db: Session = Depends(SessionLocal)):
         countries = db.query(Country).all()
     # return the countries as a list of dictionaries
     return [{"id": c.id, "name": c.country_name} for c in countries]
+
+
+'''
+Methods to CRUD Lifestyle
+'''
+
+
+def create_lifestyle(db: Session, lifestyle: Lifestyle):
+    db_lifestyle = Lifestyle(**lifestyle.dict())
+    db.add(db_lifestyle)
+    db.commit()
+    db.refresh(db_lifestyle)
+    return db_lifestyle
+
+
+def get_lifestyles(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(Lifestyle).offset(skip).limit(limit).all()
+
+
+def get_lifestyle(db: Session, lifestyle_id: int):
+    return db.query(Lifestyle).filter(Lifestyle.id == lifestyle_id).first()
+
+
+def update_lifestyle(db: Session, lifestyle_id: int, lifestyle: models.LifestyleCreate):
+    db_lifestyle = db.query(models.Lifestyle).filter(models.Lifestyle.id == lifestyle_id).first()
+    if db_lifestyle:
+        for key, value in lifestyle.dict().items():
+            setattr(db_lifestyle, key, value)
+        db.commit()
+        db.refresh(db_lifestyle)
+        return db_lifestyle
+
+
+def delete_lifestyle(db: Session, lifestyle_id: int):
+    db_lifestyle = db.query(models.Lifestyle).filter(models.Lifestyle.id == lifestyle_id).first()
+    if db_lifestyle:
+        db.delete(db_lifestyle)
+        db.commit()
+        return True
+    return False

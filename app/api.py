@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from controller import *
 from database import get_db, SessionLocal
@@ -73,8 +73,49 @@ def get_subcategories_api(category_id: int = None, db: Session = Depends(get_db)
     categories = get_subcategories(category_id, db)
     return categories
 
+
 # @router.get("/lifestyles")(get_lifestyles)
 # @router.get("/cities")(get_cities)
 # @router.get("/categories")(get_categories)
 # @router.get("/subcategories")(get_subcategories)
 # @router.get("/prices")(get_prices)
+
+
+'''
+APIs to CRUD lifestyles
+'''
+
+
+@router.post("/lifestyles/")
+def create_lifestyle(lifestyle: models.LifestyleCreate, db: Session = Depends(get_db)):
+    return create_lifestyle(db=db, lifestyle=lifestyle)
+
+
+@router.get("/lifestyles/")
+def read_lifestyles(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    lifestyles = get_lifestyles(db, skip=skip, limit=limit)
+    return lifestyles
+
+
+@router.get("/lifestyles/{lifestyle_id}")
+def read_lifestyle(lifestyle_id: int, db: Session = Depends(get_db)):
+    db_lifestyle = get_lifestyle(db, lifestyle_id=lifestyle_id)
+    if db_lifestyle is None:
+        raise HTTPException(status_code=404, detail="Lifestyle not found")
+    return db_lifestyle
+
+
+@router.put("/lifestyles/{lifestyle_id}")
+def update_lifestyle(lifestyle_id: int, lifestyle: Lifestyle, db: Session = Depends(get_db)):
+    updated_lifestyle = update_lifestyle(db=db, lifestyle_id=lifestyle_id, lifestyle=lifestyle)
+    if updated_lifestyle is None:
+        raise HTTPException(status_code=404, detail="Lifestyle not found")
+    return updated_lifestyle
+
+
+@router.delete("/lifestyles/{lifestyle_id}")
+def delete_lifestyle(lifestyle_id: int, db: Session = Depends(get_db)):
+    deleted = delete_lifestyle(db=db, lifestyle_id=lifestyle_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Lifestyle not found")
+    return {"message": "Lifestyle deleted successfully"}
