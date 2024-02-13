@@ -47,3 +47,39 @@ async def get_prices(city_id: int, lifestyle_id: int, db: Session = Depends(Sess
         }
         for price, subcategory_name in prices
     ]
+
+
+def get_categories(name: str = None, db: Session = Depends(SessionLocal)):
+    # get the categories from the database
+    if name:
+        # filter by name if provided
+        categories = db.query(Category).filter(Category.category_name == name).all()
+    else:
+        # otherwise get all categories
+        categories = db.query(Category).all()
+    # return the categories as a list of dictionaries
+    return [{"id": c.id, "name": c.category_name} for c in categories]
+
+
+def get_subcategories(category_id: int = None, db: Session = Depends(SessionLocal)):
+    # get the subcategories from the database
+    if category_id:
+        # filter by category id if provided
+        subcategories = db.query(SubCategory).filter(SubCategory.category_id_fk == category_id).all()
+    else:
+        # otherwise get all subcategories
+        subcategories = db.query(SubCategory).all()
+    # return the subcategories as a list of dictionaries
+    return [{"id": s.id, "name": s.subcategory_name, "category_id": s.category_id_fk} for s in subcategories]
+
+
+# get the countries from the database
+def get_countries(name: str = None, db: Session = Depends(SessionLocal)):
+    if name:
+        # filter by name if provided
+        countries = db.query(Country).filter(Country.country_name == name).all()
+    else:
+        # otherwise get all countries
+        countries = db.query(Country).all()
+    # return the countries as a list of dictionaries
+    return [{"id": c.id, "name": c.country_name} for c in countries]

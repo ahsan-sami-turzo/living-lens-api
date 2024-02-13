@@ -8,6 +8,7 @@ load_dotenv(dotenv_path=env_path)
 
 
 class Settings:
+    API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "LIVING LENS"
     PROJECT_VERSION: str = "1.0.0"
     POSTGRES_USER: str = os.getenv("PG_USER")

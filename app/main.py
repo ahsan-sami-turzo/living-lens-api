@@ -12,13 +12,7 @@ engine = create_engine(settings.DATABASE_URL)
 session = Session(engine)
 
 # Include the API endpoints from api.py
-app.include_router(api_router)
-
-
-@app.get("/api")
-def read_items():
-    return {"project": "living-lens"}
-
+app.include_router(api_router, prefix=settings.API_V1_STR)
 
 if __name__ == "__main__":
     import uvicorn
