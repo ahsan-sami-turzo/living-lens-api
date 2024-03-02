@@ -1,3 +1,4 @@
+from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String, ForeignKey, Float
 from sqlalchemy.orm import declarative_base
 
@@ -72,3 +73,8 @@ class Price(Base):
         self.average_price = average_price
         self.min_price = min_price
         self.max_price = max_price
+
+
+class PriceRequest(BaseModel):
+    city_id: int
+    category_ids: list[int]
