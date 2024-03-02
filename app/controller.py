@@ -87,7 +87,6 @@ def get_countries(name: str = None, db: Session = Depends(SessionLocal)):
 
 '''
 Methods to CRUD Lifestyle
-'''
 
 
 def create_lifestyle(db: Session, lifestyle: Lifestyle):
@@ -106,8 +105,8 @@ def get_lifestyle(db: Session, lifestyle_id: int):
     return db.query(Lifestyle).filter(Lifestyle.id == lifestyle_id).first()
 
 
-def update_lifestyle(db: Session, lifestyle_id: int, lifestyle: models.LifestyleCreate):
-    db_lifestyle = db.query(models.Lifestyle).filter(models.Lifestyle.id == lifestyle_id).first()
+def update_lifestyle(db: Session, lifestyle_id: int, lifestyle: Lifestyle):
+    db_lifestyle = db.query(Lifestyle).filter(Lifestyle.id == lifestyle_id).first()
     if db_lifestyle:
         for key, value in lifestyle.dict().items():
             setattr(db_lifestyle, key, value)
@@ -117,9 +116,11 @@ def update_lifestyle(db: Session, lifestyle_id: int, lifestyle: models.Lifestyle
 
 
 def delete_lifestyle(db: Session, lifestyle_id: int):
-    db_lifestyle = db.query(models.Lifestyle).filter(models.Lifestyle.id == lifestyle_id).first()
+    db_lifestyle = db.query(Lifestyle).filter(Lifestyle.id == lifestyle_id).first()
     if db_lifestyle:
         db.delete(db_lifestyle)
         db.commit()
         return True
     return False
+
+'''

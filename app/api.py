@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
+from charts_controller import *
 from controller import *
 from database import get_db, SessionLocal
 
@@ -74,20 +75,24 @@ def get_subcategories_api(category_id: int = None, db: Session = Depends(get_db)
     return categories
 
 
-# @router.get("/lifestyles")(get_lifestyles)
-# @router.get("/cities")(get_cities)
-# @router.get("/categories")(get_categories)
-# @router.get("/subcategories")(get_subcategories)
-# @router.get("/prices")(get_prices)
+@router.get("/get/bar-chart/categories/prices/{city_id}")
+def get_categories(city_id: int, db: Session = Depends(get_db)):
+    categories = get_categories_prices_by_city(db, city_id)
+    if categories is None:
+        raise HTTPException(status_code=404, detail="City not found")
+    return categories
+
+
+
+
 
 
 '''
 APIs to CRUD lifestyles
-'''
 
 
 @router.post("/lifestyles/")
-def create_lifestyle(lifestyle: models.LifestyleCreate, db: Session = Depends(get_db)):
+def create_lifestyle(lifestyle: Lifestyle, db: Session = Depends(get_db)):
     return create_lifestyle(db=db, lifestyle=lifestyle)
 
 
@@ -119,3 +124,5 @@ def delete_lifestyle(lifestyle_id: int, db: Session = Depends(get_db)):
     if not deleted:
         raise HTTPException(status_code=404, detail="Lifestyle not found")
     return {"message": "Lifestyle deleted successfully"}
+
+'''
