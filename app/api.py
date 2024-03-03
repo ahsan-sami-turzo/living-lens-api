@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException
 from charts_controller import *
 from controller import *
 from database import get_db, SessionLocal
+from pie_chart_controller import *
 
 router = APIRouter()
 
@@ -106,6 +107,12 @@ def get_category_average_prices_as_percentages_api(request: CityCategoryPriceReq
     if average_prices is None:
         raise HTTPException(status_code=404, detail="Country or categories not found")
     return average_prices
+
+
+@router.get("/get-piechartdata/{city_id}")
+def get_avg_price_piechart_data_api(city_id: int = None, db: Session = Depends(get_db)):
+    prices = get_avg_price_piechart(city_id, db)
+    return prices
 
 
 '''
