@@ -88,3 +88,46 @@ def get_average_prices_by_country_and_categories(db, country_id, category_ids):
         }
 
     return results
+
+
+def get_category_average_prices_as_percentages(db, city_id, category_ids):
+    city = db.query(City).get(city_id)
+
+    if not city:
+        return []
+
+    prices = db.query(Price).join(
+        Category, Price.subcategory_id_fk == Category.id
+    ).filter(
+        Price.city_id_fk == city_id, Category.id.in_(category_ids)
+    ).all()
+
+    total_average_price = sum(price.average_price for price in prices) / len(prices) if prices else 0
+
+    category_sums = {}
+    category_counts = {}
+    for price in prices:
+        category_id = price.subcategory_id_fk
+        category_sums[category_id] = category_sums.get(category_id, 0) + price.average_price
+        category_counts[category_id] = category_counts.get(category_id, 0) + 1
+
+    results = []
+    for category_id, category_sum in category_sums.items():
+        category_count = category_counts[category_id]
+        category_average = category_sum / category_count
+        category_percentage = round(category_average / total_average_price * 100, 2)
+        category_name = (
+            db.query(Category.category_name)
+            .filter(Category.id == category_id)
+            .scalar()
+        )
+        results.append(
+            CategoryPrice(
+                category_id=category_id,
+                category_name=category_name,
+                average_price_percentage=category_percentage,
+            )
+        )
+
+    results.sort(key=lambda x: x.category_id)
+    return results

@@ -75,13 +75,17 @@ class Price(Base):
         self.max_price = max_price
 
 
-# Request model
 class CityCategoryPriceRequest(BaseModel):
     city_id: int
     category_ids: list[int]
 
 
-# Request model
 class CountryCategoryPriceRequest(BaseModel):
     country_id: int
     category_ids: list[int]
+
+
+class CategoryPrice(BaseModel):
+    category_id: int
+    category_name: str
+    average_price_percentage: float

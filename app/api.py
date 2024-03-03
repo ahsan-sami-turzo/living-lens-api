@@ -76,7 +76,7 @@ def get_subcategories_api(category_id: int = None, db: Session = Depends(get_db)
 
 
 @router.get("/get/bar-chart/categories/prices/{city_id}")
-def get_categories(city_id: int, db: Session = Depends(get_db)):
+def get_categories_prices_by_city_api(city_id: int, db: Session = Depends(get_db)):
     categories = get_categories_prices_by_city(db, city_id)
     if categories is None:
         raise HTTPException(status_code=404, detail="City not found")
@@ -84,7 +84,7 @@ def get_categories(city_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/get/bar-chart/prices/city/categories")
-def get_prices(request: CityCategoryPriceRequest, db: Session = Depends(get_db)):
+def get_prices_by_city_and_categories_api(request: CityCategoryPriceRequest, db: Session = Depends(get_db)):
     prices = get_prices_by_city_and_categories(db, request.city_id, request.category_ids)
     if prices is None:
         raise HTTPException(status_code=404, detail="City or categories not found")
@@ -92,8 +92,17 @@ def get_prices(request: CityCategoryPriceRequest, db: Session = Depends(get_db))
 
 
 @router.post("/api/v1/get/bar-chart/prices/country/categories")
-def get_average_prices(request: CountryCategoryPriceRequest, db: Session = Depends(get_db)):
+def get_average_prices_by_country_and_categories_api(request: CountryCategoryPriceRequest,
+                                                     db: Session = Depends(get_db)):
     average_prices = get_average_prices_by_country_and_categories(db, request.country_id, request.category_ids)
+    if average_prices is None:
+        raise HTTPException(status_code=404, detail="Country or categories not found")
+    return average_prices
+
+
+@router.post("/api/v1/get/pie-chart/percentages/city/categories")
+def get_category_average_prices_as_percentages_api(request: CityCategoryPriceRequest, db: Session = Depends(get_db)):
+    average_prices = get_category_average_prices_as_percentages(db, request.city_id, request.category_ids)
     if average_prices is None:
         raise HTTPException(status_code=404, detail="Country or categories not found")
     return average_prices
