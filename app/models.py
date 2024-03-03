@@ -75,6 +75,13 @@ class Price(Base):
         self.max_price = max_price
 
 
-class PriceRequest(BaseModel):
+# Request model
+class CityCategoryPriceRequest(BaseModel):
     city_id: int
+    category_ids: list[int]
+
+
+# Request model
+class CountryCategoryPriceRequest(BaseModel):
+    country_id: int
     category_ids: list[int]

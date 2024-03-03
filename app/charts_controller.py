@@ -40,3 +40,51 @@ def get_prices_by_city_and_categories(db, city_id, category_ids):
     prices = [{"id": p.id, "name": p.category_name, "min_price": p.min_price, "max_price": p.max_price,
                "average_price": p.average_price} for p in prices]
     return prices
+
+
+def get_average_prices_by_country_and_categories(db, country_id, category_ids):
+    # Query the average prices and calculate total for each city
+    average_prices = (
+        db.query(
+            City.id,
+            City.city_name,
+            Category.id,
+            Category.category_name,
+            func.avg(Price.average_price).label("average_price"),
+            func.sum(func.avg(Price.average_price)).over(partition_by=City.id).label("total"),
+        )
+        .join(Country, Country.id == City.country_id_fk)
+        .join(Price, Price.city_id_fk == City.id)
+        .join(Category, Category.id == Price.subcategory_id_fk)
+        .filter(Country.id == country_id, Category.id.in_(category_ids))
+        .group_by(City.id, City.city_name, Category.id, Category.category_name)
+        .order_by(City.id, Category.id)
+        .all()
+    )
+
+    # Convert the query result to the desired nested dictionary structure
+    results = {
+        "country_id": country_id,
+        "cities": {},
+    }
+    for p in average_prices:
+        city_id = p[0]
+        city_name = p[1]
+        category_id = p[2]
+        category_name = p[3]
+        average_price = p[4]
+        total = p[5]
+
+        if city_id not in results["cities"]:
+            results["cities"][city_id] = {
+                "city_name": city_name,
+                "categories": {},
+                "total": total,  # Add the total for the city
+            }
+
+        results["cities"][city_id]["categories"][category_id] = {
+            "category_name": category_name,
+            "average_price": average_price,
+        }
+
+    return results
