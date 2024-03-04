@@ -21,9 +21,15 @@ def get_data(model_type, db: Session = Depends(SessionLocal)):
 
 
 # Usage in API endpoints:
-@router.get("/get-cities")
-def get_cities_api(db: Session = Depends(get_db)):
-    return get_data(City, db)
+@router.get("/get-cities/{country_id}")
+def get_cities_api(country_id: int ,db: Session = Depends(get_db)):
+    cities =  get_cities(country_id, db)
+    return cities
+
+@router.get("/get-subcategories-by-city-and-category/{city_id}/{category_id}")
+def get_subcategories_by_city_id_and_category_id_api(city_id: int,category_id:int ,db: Session = Depends(get_db)):
+    prices =  get_subcategories_by_city_id_and_category_id(city_id,category_id, db)
+    return prices
 
 
 @router.get("/get-lifestyles")
@@ -110,9 +116,16 @@ def get_category_average_prices_as_percentages_api(request: CityCategoryPriceReq
 
 
 @router.get("/get-piechartdata/{city_id}")
-def get_avg_price_piechart_data_api(city_id: int = None, db: Session = Depends(get_db)):
-    prices = get_avg_price_piechart(city_id, db)
+def get_avg_price_pct_piechart_data_api(city_id: int = None, db: Session = Depends(get_db)):
+    prices_pct = get_avg_price_piechart(city_id, db)
+    return prices_pct
+
+
+@router.get("/get-barchartdata/{city_id}")
+def get_avg_price_barchart_data_api(city_id: int = None, db: Session = Depends(get_db)):
+    prices = get_avg_price_barchart(city_id, db)
     return prices
+
 
 
 '''

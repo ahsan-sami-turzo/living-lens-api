@@ -6,13 +6,19 @@ from models import *
 
 
 # Define the controller method to get the list of cities
-def get_cities(db: Session = Depends(SessionLocal)):
+def get_cities(country_id: int, db: Session = Depends(SessionLocal)):
     # Query the database for all the cities
-    cities = db.query(City).all()
-    # Convert the city objects to dictionaries
-    cities = [city.__dict__ for city in cities]
-    # Return the list of cities
-    return cities
+    if(country_id == 0):
+        cities = db.query(City).all()
+        # Convert the city objects to dictionaries
+        cities = [city.__dict__ for city in cities]
+        # Return the list of cities
+        return cities
+    else:
+        cities = db.query(City).filter(City.country_id_fk==country_id)
+        cities = [city.__dict__ for city in cities]
+        # Return the list of cities
+        return cities
 
 
 # Define the controller method to get the list of lifestyles
@@ -72,6 +78,17 @@ def get_subcategories(category_id: int = None, db: Session = Depends(SessionLoca
     # return the subcategories as a list of dictionaries
     return [{"id": s.id, "name": s.subcategory_name, "category_id": s.category_id_fk} for s in subcategories]
 
+def get_subcategories_by_city_id_and_category_id(city_id:int,category_id: int = None, db: Session = Depends(SessionLocal)):
+    # get the subcategories from the database
+    result = db.query(Price).filter(Price.city_id_fk==city_id).join(SubCategory).filter(SubCategory.category_id_fk==category_id).all()
+    sub_categories = db.query(SubCategory).filter(SubCategory.category_id_fk==category_id).all()
+    sub_categories = [city.__dict__ for city in sub_categories]
+    result = [city.__dict__ for city in result]
+    for i in range(len(result)):
+        result[i]['subcategory_id'] = sub_categories[i]['id']
+        result[i]['subcategory_name'] = sub_categories[i]['subcategory_name']
+    # return the subcategories as a list of dictionaries
+    return result
 
 # get the countries from the database
 def get_countries(name: str = None, db: Session = Depends(SessionLocal)):
