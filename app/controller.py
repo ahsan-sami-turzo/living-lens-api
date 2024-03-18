@@ -19,6 +19,13 @@ def get_cities(country_id: int, db: Session = Depends(SessionLocal)):
         cities = [city.__dict__ for city in cities]
         # Return the list of cities
         return cities
+    
+def get_city_by_id(city_id: int, db: Session = Depends(SessionLocal)):
+    # Query the database for all the cities
+    city = db.query(City).filter(City.id==city_id).all()
+    print(city)
+    # Return the list of cities
+    return city[0].__dict__
 
 
 # Define the controller method to get the list of lifestyles
