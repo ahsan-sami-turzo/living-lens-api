@@ -4,8 +4,17 @@ from sqlalchemy.orm import Session
 
 from api import router as api_router
 from config import settings
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3001"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Create the database engine
 engine = create_engine(settings.DATABASE_URL)
