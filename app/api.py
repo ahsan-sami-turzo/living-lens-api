@@ -26,6 +26,11 @@ def get_cities_api(country_id: int ,db: Session = Depends(get_db)):
     cities =  get_cities(country_id, db)
     return cities
 
+@router.get("/get-city-by-id/{city_id}")
+def get_city_api(city_id: int ,db: Session = Depends(get_db)):
+    city =  get_city_by_id(city_id, db)
+    return city
+
 @router.get("/get-subcategories-by-city-and-category/{city_id}/{category_id}")
 def get_subcategories_by_city_id_and_category_id_api(city_id: int,category_id:int ,db: Session = Depends(get_db)):
     prices =  get_subcategories_by_city_id_and_category_id(city_id,category_id, db)

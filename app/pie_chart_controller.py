@@ -34,17 +34,21 @@ def get_avg_price_piechart(city_id: int = None, db: Session = Depends(SessionLoc
     for row in res:
         if (row[1] == "Utilities (Monthly)"):
             utilities_price = row[0]
+            sum = sum + row[0]
         elif (row[1] == "Childcare"):
             childcare_price = row[0]
+            sum = sum + row[0]
         elif (row[1] == "Restaurants"):
             restaurants_price = row[0]
+            sum = sum + row[0]
         elif (row[1] == "Clothing And Shoes"):
             clothing_price = row[0]
+            sum = sum + row[0]
         elif (row[1] == "Transportation"):
             transportation_price = row[0]
+            sum = sum + row[0]
 
-        sum = sum + row[0]
-
+    print(sum)
     ## percentages (pct)
     utilities_pct = round(utilities_price / sum * 100, 2)
     childcare_pct = round(childcare_price / sum * 100, 2)
@@ -91,16 +95,19 @@ def get_avg_price_barchart(city_id: int = None, db: Session = Depends(SessionLoc
     for row in res:
         if (row[1] == "Utilities (Monthly)"):
             utilities_price = row[0]
+            sum = sum + row[0]
         elif (row[1] == "Childcare"):
             childcare_price = row[0]
+            sum = sum + row[0]
         elif (row[1] == "Restaurants"):
             restaurants_price = row[0]
+            sum = sum + row[0]
         elif (row[1] == "Clothing And Shoes"):
             clothing_price = row[0]
+            sum = sum + row[0]
         elif (row[1] == "Transportation"):
             transportation_price = row[0]
-
-        sum = sum + row[0]
+            sum = sum + row[0]
 
     return [{
         "Utilities": utilities_price,
