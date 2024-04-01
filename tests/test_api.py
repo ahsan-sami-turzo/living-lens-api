@@ -68,7 +68,7 @@ def test_get_cities():
 #     assert len(data1) == len(values_data)
 #     for value1, value2 in zip(data1, values_data):
 #         assert value1 == value2
-        
+    
 def test_get_city():
     # List of city_id values to test
     city_ids = [1, 't']
@@ -89,7 +89,7 @@ def test_get_city():
                 assert response.status_code == 200
                 data1_with_city_id = data1 + [city_id]
                 assert len(data1_with_city_id) == len(values_data)
-                for value1, value2 in zip(data1_with_city_id, values_data):
+                for value1, value2 in zip(values_data, data1_with_city_id):
                     assert value1 == value2
             # city_id is integer but not in the boundary
             else:
@@ -182,3 +182,25 @@ def test_get_categories_prices_by_city_():
                 assert len(data) == 0
         else:
             assert response.status_code == 422
+
+def test_get_countries():
+    country_names = ["Finland", "Germany", "Sweden"]
+    existing = ["Finland", "Germany", "Italy"]
+    for country_name in country_names:
+        response = client.get(f"/get-countries/?name={country_name}")
+        data = response.json()
+        if country_name in existing:
+            assert response.status_code == 200 and len(data) == 1
+        else:
+            assert response.status_code == 200 and len(data) == 0
+
+def test_get_categories():
+    category_names = ["Transportation", "Utilities (Monthly)", "Groceries"]
+    existing = ["Restaurants", "Markets", "Transportation", "Utilities (Monthly)", "Sports And Leisure", "Childcare", "Clothing And Shoes", "Rent Per Month",  "Buy Apartment Price", "Salaries And Financing"]
+    for category_name in category_names:
+        response = client.get(f"/get-categories/?name={category_name}")
+        data = response.json()
+        if category_name in existing:
+            assert response.status_code == 200 and len(data) == 1
+        else:
+            assert response.status_code == 200 and len(data) == 0
