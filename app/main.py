@@ -1,11 +1,21 @@
 from fastapi import FastAPI
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-
+from fastapi.middleware.cors import CORSMiddleware
+import sys
+sys.path.append("./app")
 from api import router as api_router
 from config import settings
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Create the database engine
 engine = create_engine(settings.DATABASE_URL)
