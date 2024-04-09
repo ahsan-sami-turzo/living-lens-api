@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: living-lens-api-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: living-lens-api
+  template:
+    metadata:
+      labels:
+        app: living-lens-api
+    spec:
+      containers:
+        - name: living-lens-api
+          image: <IMAGE>
+              
+             
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: living-lens-api-svc
+spec:
+  selector:
+    app: living-lens-api
+  ports:
+    - name: living-lens-api
+      protocol: TCP
+      port: 80
+      targetPort: 80
