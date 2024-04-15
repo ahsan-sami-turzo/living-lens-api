@@ -15,8 +15,32 @@ spec:
       containers:
         - name: living-lens-api
           image: <IMAGE>
-              
-             
+          env:
+            - name: PG_USER
+              valueFrom:
+                secretKeyRef:
+                  name: ll-db-secret
+                  key: PG_USER
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ll-db-secret
+                  key: PG_PASSWORD
+            - name: PG_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: ll-db-secret
+                  key: PG_HOST
+            - name: PG_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: ll-db-secret
+                  key: PG_PORT
+            - name: PG_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: ll-db-secret
+                  key: PG_DATABASE
 ---
 apiVersion: v1
 kind: Service
