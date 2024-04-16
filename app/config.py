@@ -1,25 +1,24 @@
 import os
-# from pydantic_settings import BaseSettings
+from pathlib import Path
 
-class Settings():
-    POSTGRES_USER: str = os.getenv("POSTGRES_USER")
-    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD")
-    POSTGRES_SERVER: str = os.getenv("POSTGRES_HOST")
-    POSTGRES_PORT: str = os.getenv("POSTGRES_PORT")
-    POSTGRES_DB: str = os.getenv("POSTGRES_DB")
+from dotenv import load_dotenv
+
+env_path = Path('..') / '.env'
+load_dotenv(dotenv_path=env_path)
+
+
+class Settings:
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "LIVING LENS"
     PROJECT_VERSION: str = "1.0.0"
+    POSTGRES_USER: str = os.getenv("PG_USER")
+    POSTGRES_PASSWORD: str = os.getenv("PG_PASSWORD")
+    POSTGRES_SERVER: str = os.getenv("PG_HOST")
+    POSTGRES_PORT: str = os.getenv("PG_PORT")
+    POSTGRES_DB: str = os.getenv("PG_DATABASE")
+    DATABASE_URL: str = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
-    @property
-    def DATABASE_URL(self) -> str:
-        # Constructs the database URL using the current settings values.
-        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+    print(DATABASE_URL)
 
-    class Config:
-        # Configures the model to read from environment variables.
-        env_file = None
-        # env_file_encoding = 'utf-8'
 
-settings = Settings()  # This will now correctly load environment variables at runtime.
-print(settings.DATABASE_URL)
+settings = Settings()
