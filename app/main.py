@@ -18,6 +18,7 @@ app.add_middleware(
 )
 
 # Create the database engine
+print(settings.DATABASE_URL)
 engine = create_engine(settings.DATABASE_URL)
 session = Session(engine)
 
