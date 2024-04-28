@@ -7,20 +7,20 @@ services:
       POSTGRES_PASSWORD: ll-dev
       POSTGRES_DB: living_lens
     volumes:
-      - ./dev/dev_2.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./dev/dev_3.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - ":5432"
+      - "8383:5432"
 
   fastapi:
     build:
       context: .
       dockerfile: dev/dev.Dockerfile
     environment:
-      POSTGRES_USER: ll-dev
-      POSTGRES_PASSWORD: ll-dev
-      POSTGRES_HOST: db
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: living_lens
+      PG_USER: ll-dev
+      PG_PASSWORD: ll-dev
+      PG_HOST: db
+      PG_PORT: 5432
+      PG_DATABASE: living_lens
     ports:
       - "8080:80"
     depends_on:

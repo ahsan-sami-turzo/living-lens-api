@@ -149,7 +149,7 @@ data/
 **/tls/*.pem
 
 ## Ignore Dockerfiles' build cache
-**/.dockerfile.1
+# **/.dockerfile.1
 
 ## Ignore saved image tarballs
 *.tar
@@ -175,8 +175,8 @@ data/
 *.Dockerfile.*.swx
 *.dockerfile.*.swx
 *.Dockerfile.*.swx
-*.dockerfile
-*.Dockerfile
+# *.dockerfile
+# *.Dockerfile
 .dockerignore
 .dockerproject
 
